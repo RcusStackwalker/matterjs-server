@@ -3,6 +3,7 @@ build/
 dist/
 /.*
 !.dockerignore
+!.github
 docs/plans/
 # AI-tooling scratch directories (memory, transcripts, plans). Keep local-only.
 superpowers/

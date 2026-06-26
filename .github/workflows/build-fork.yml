@@ -1,0 +1,50 @@
+name: Build fork Docker image
+
+on:
+  push:
+    branches: ['fix/**']
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Derive Docker tags from branch and SHA
+        id: tag
+        run: |
+          branch=$(echo '${{ github.ref_name }}' | tr '/' '-')
+          sha="${{ github.sha }}"
+          echo "branch=${branch}" >> $GITHUB_OUTPUT
+          echo "sha=${sha:0:7}" >> $GITHUB_OUTPUT
+
+      - name: Set up QEMU (for arm64 cross-compilation)
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./docker/matterjs-server/Dockerfile.fork
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/matterjs-server:${{ steps.tag.outputs.sha }}
+            ghcr.io/${{ github.repository_owner }}/matterjs-server:latest-fix
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
