@@ -2,6 +2,7 @@ node_modules/
 build/
 dist/
 /.*
+!.dockerignore
 docs/plans/
 # AI-tooling scratch directories (memory, transcripts, plans). Keep local-only.
 superpowers/

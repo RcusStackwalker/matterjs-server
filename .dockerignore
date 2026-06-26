@@ -1,0 +1,11 @@
+.git
+.github
+.devcontainer
+.idea
+.vscode
+python_client
+python_ble_proxy
+docs
+*.md
+packages/*/dist
+packages/*/build
