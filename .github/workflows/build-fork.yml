@@ -20,8 +20,11 @@ jobs:
         run: |
           branch=$(echo '${{ github.ref_name }}' | tr '/' '-')
           sha="${{ github.sha }}"
+          # ghcr.io requires lowercase — github.repository_owner preserves registered casing
+          owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')
           echo "branch=${branch}" >> $GITHUB_OUTPUT
           echo "sha=${sha:0:7}" >> $GITHUB_OUTPUT
+          echo "owner=${owner}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU (for arm64 cross-compilation)
         uses: docker/setup-qemu-action@v3
@@ -44,7 +47,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/matterjs-server:${{ steps.tag.outputs.sha }}
-            ghcr.io/${{ github.repository_owner }}/matterjs-server:latest-fix
+            ghcr.io/${{ steps.tag.outputs.owner }}/matterjs-server:${{ steps.tag.outputs.sha }}
+            ghcr.io/${{ steps.tag.outputs.owner }}/matterjs-server:latest-fix
           cache-from: type=gha
           cache-to: type=gha,mode=max
