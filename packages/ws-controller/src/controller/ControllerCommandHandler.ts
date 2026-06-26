@@ -521,7 +521,7 @@ export class ControllerCommandHandler {
         for (const nodeId of this.#nodes.getIds()) {
             try {
                 this.#nodes.get(nodeId).connect({
-                    subscribeMinIntervalFloorSeconds: 1,
+                    subscribeMinIntervalFloorSeconds: 0,
                     subscribeMaxIntervalCeilingSeconds: undefined,
                 });
             } catch (error) {
